@@ -1,104 +1,133 @@
-import { createRoot } from "react-dom/client";
-import "./index.css";
 
+import { createRoot } from "react-dom/client";
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
 
-import MainLayout from "./layouts/MainLayout";
+import "./index.css";
 
-import Homepage from "./pages/Homepage";
+// Pages
+import Home from "./pages/Home";
+import EventDetail from "./pages/EventDetail";
 import Register from "./pages/Register";
-import About from "./pages/About";
 import Login from "./pages/Login";
-import Product from "./pages/Product";
-import Artikel from "./pages/Artikel";
-import ArtikelDetail from "./pages/ArtikelDetail";
-import Contact from "./pages/Contact";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Layanan from "./pages/Layanan";
-import Mitra from "./components/Mitra";
-import Location from "./pages/Location";
-import ProductDetail from "./pages/ProductDetail";
-import Teams from "./pages/Teams";
-import Promo from "./components/Promo";
-import CreateBlog from "./pages/CreateBlog";
 
+import OrganizerDashboard from "./pages/organizer/OrganizerDashboard";
+import OrganizerTransactions from "./pages/organizer/OrganizerTransactions";
+
+import CustomerTransactions from "./pages/CustomerTransactions";
+import CustomerDashboard from "./pages/CustomerDashboard";
+
+// Components
+import ProtectedRoute from "./components/ProtectedRoute";
+import OrganizerLayout from "./components/organizer/OrganizerLayout";
+import OrganizerAttendees from "./pages/organizer/OrganizerAttendees";
+import OrganizerSalesReport from "./pages/organizer/OrganizerSalesReport";
+import OrganizerVouchers from "./pages/organizer/OrganizerVouchers";
+import OrganizerEvents from "./pages/organizer/OrganizerEvents";
+import OrganizerCreateEvent from "./pages/organizer/OrganizerCreateEvent";
+import Profile from "./pages/Profile";
+import ForgotPassword from "./pages/ForgotPassword";
+import MyTickets from "./pages/MyTickets";
 
 const router = createBrowserRouter([
+  // =========================
+  // PUBLIC ROUTES
+  // =========================
   {
     path: "/",
-    element: <MainLayout />,
+    element: <Home />,
+  },
+  {
+    path: "/events/:id",
+    element: <EventDetail />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
+  },
+  {
+  path: "/customer/my-tickets",
+  element: <MyTickets />,
+},
+
+  // =========================
+  // ORGANIZER ROUTES
+  // =========================
+  {
+    element: <ProtectedRoute allowedRoles={["organizer"]} />,
     children: [
       {
-        index: true,
-        element: <Homepage />,
-      },
-      {
-        path: "about",
-        element: <About />,
-      },
-      {
-        path: "product",
-        element: <Product />,
-      },
-      {
-        path: "login",
-        element: <Login />,
-      },
-      {
-        path: "register",
-        element: <Register />,
-      },
-      {
-        path: "artikel",
-        element: <Artikel />,
-      },
-       {
-        path: "mitra",
-        element: <Mitra />,
-      },
-      {
-        path: "promo",
-        element: <Promo />,
-      },
-      {
-        path: "artikel/:objectId",
-        element: <ArtikelDetail />,
-      },
-      {
-        path: "location",
-        element: <Location />,
-      },
-      {
-        path: "teams",
-        element: <Teams />,
-      },
-      {
-        path: "product/:objectId",
-        element: <ProductDetail />,
-      },
-     {
-  path: "contact",
-  element: (
-    <ProtectedRoute>
-      <Contact />
-    </ProtectedRoute> 
-  ),
+        element: <OrganizerLayout />,
+        children: [
+          {
+            path: "/organizer/dashboard",
+            element: <OrganizerDashboard />,
+          },
+          {
+            path: "/organizer/transactions",
+            element: <OrganizerTransactions />,
+          },
+          {
+  path: "/organizer/attendees",
+  element: <OrganizerAttendees />,
 },
 {
-  path: "create-blog",
-  element: (
-    <ProtectedRoute>
-      <CreateBlog />
-    </ProtectedRoute> 
-  ),
+  path: "/organizer/salesreport",
+  element: <OrganizerSalesReport />,
 },
- {
-        path: "layanan",
-        element: <Layanan />,
+{
+  path: "/organizer/vouchers",
+  element: <OrganizerVouchers />,
+},
+{
+  path: "/organizer/events",
+  element: <OrganizerEvents />,
+},
+{
+  path: "/organizer/events/new",
+  element: <OrganizerCreateEvent />,
+},
+{
+  path: "/organizer/events/:id/edit",
+  element: <OrganizerCreateEvent />,
+},
+{
+  path: "/organizer/profile",
+  element: <Profile />,
+},
+        ],
       },
+    ],
+  },
+
+  // =========================
+  // CUSTOMER ROUTES
+  // =========================
+  {
+    element: <ProtectedRoute allowedRoles={["customer"]} />,
+    children: [
+      {
+        path: "/customer/transactions",
+        element: <CustomerTransactions />,
+      },
+      {
+        path: "/customer/dashboard",
+        element: <CustomerDashboard />,
+      },
+      {
+  path: "/customer/profile",
+  element: <Profile />,
+},
     ],
   },
 ]);

@@ -1,18 +1,50 @@
-import { Navigate } from "react-router-dom";
-import type { ReactNode } from "react";
 
-interface ProtectedRouteProps {
-  children: ReactNode;
+import { Navigate, Outlet } from "react-router-dom";
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: "customer" | "organizer";
 }
 
-function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const userToken = localStorage.getItem("userToken");
+interface ProtectedRouteProps {
+  allowedRoles?: User["role"][];
+}
 
-  if (!userToken) {
+export default function ProtectedRoute({
+  allowedRoles,
+}: ProtectedRouteProps) {
+  const token = sessionStorage.getItem("evently_token");
+  const storedUser = sessionStorage.getItem("evently_user");
+
+  if (!token || !storedUser) {
     return <Navigate to="/login" replace />;
   }
 
-  return children;
-}
+  let user: User;
 
-export default ProtectedRoute;
+  try {
+    user = JSON.parse(storedUser) as User;
+  } catch {
+    sessionStorage.removeItem("evently_token");
+    sessionStorage.removeItem("evently_user");
+    return <Navigate to="/login" replace />;
+  }
+
+  if (
+    !user ||
+    !Number.isInteger(user.id) ||
+    !["customer", "organizer"].includes(user.role)
+  ) {
+    sessionStorage.removeItem("evently_token");
+    sessionStorage.removeItem("evently_user");
+    return <Navigate to="/login" replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <Outlet />;
+}
